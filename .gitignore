@@ -1,0 +1,11 @@
+obj/
+compile_commands/
+.vscode/
+.cache/
+compile_commands.json
+Makefile
+*.ppm
+*.png
+romanesco
+*.log
+*.make
