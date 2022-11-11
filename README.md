@@ -5,26 +5,26 @@ This program is a simple GPU, double-floating-point precision plotter for Julia 
 
 #### Features
 
-- Julia sets with live constant changing
-- Mandlebrot set
-- Live Panning and zooming
-- Integer exponents
-- Real exponents (Moivre's formula)
-- Image exporting
-- Uses -Wall and -Werror
+- [x] Julia sets with live constant changing
+- [x] Mandlebrot set
+- [x] Live Panning and zooming
+- [x] Integer exponents
+- [x] Real exponents (Moivre's formula)
+- [x] Image exporting
+- [x] Uses -Wall and -Werror
+- [x] Works on both linux and windows
 
 #### Todo (Not ordered)
 
-- Clean code
-  - Separate fractal renderers in different files
-  - Clean CPU side code
-- Multiple coloring methods
-- Multiple coloring palettes
-- Burning ship fractal
-- Newton's fractals
-- Better windows support (POSIX for Unix, windows.h for windows)
-- Save locations
-- Add some sort of configuration (Mostly to configure OpenGL workgroup sizes)
+- [ ] Clean code
+  - [ ] Separate fractal renderers in different files
+  - [ ] Clean CPU side code
+- [ ] Multiple coloring methods
+- [ ] Multiple coloring palettes
+- [ ] Burning ship fractal
+- [ ] Newton's fractals
+- [ ] Save locations
+- [ ] Add some sort of configuration (Mostly to configure OpenGL workgroup sizes)
 
 #### Dependencies
 
@@ -32,11 +32,11 @@ This program is a simple GPU, double-floating-point precision plotter for Julia 
 - SDL2 for window and GL context
 - GLEW for OpenGL
 - Nuklear for UI
-- Currently working with POSIX
+- Posix for file I/O
 
-#### Building 
+## Building 
 
-For Linux (and MacOSX, not tested yet)):
+##### For Linux (and MacOSX but not tested):
 Install SDL2 and glew through your package manager
 examble on Debian based systems:\
 `# apt install libsdl2-dev libglew-dev`\
@@ -46,7 +46,7 @@ examble on Debian based systems:\
 `$ make`\
 `$ ./romanesco`
 
-For Windows:
+##### For Windows:
 You must use Visual Studio / Visual C compiler :
 The necessary dependencies (include, libs and dlls) are included in the windows folder.
 
