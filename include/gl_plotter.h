@@ -1,9 +1,9 @@
 #ifndef __GL_PLOTTER_H__
 #define __GL_PLOTTER_H__
 
-#include <stdint.h>
 #define GLEW_STATIC
 #include<GL/glew.h>
+#include<stdint.h>
 #include<log.h>
 #include<shader.h>
 #include<plotter_params.h>
@@ -11,6 +11,12 @@
 #include<math.h>
 #include<time.h>
 #include<stdbool.h>
+
+//Include windows header for Clock
+#include<os_name.h>
+#if OS_WINDOWS
+    #include<window.h>
+#endif
 
 /*
     This translation unit provides an OpenGL plotter, following the "plotter.h" interface

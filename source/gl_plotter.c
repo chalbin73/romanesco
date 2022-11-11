@@ -3,6 +3,7 @@
 // This code is licensed under MIT license (see LICENSE.txt for details)
 
 #include<gl_plotter.h>
+#include <stdint.h>
 
 float screen_quad[12] =
 {
@@ -130,14 +131,17 @@ void gl_plotter_render(void *gctx, struct plot_params_t *params)
     //Renders the fractal to the texture
     if(params->updated)
     {
-        uint64_t t = 0;
+        uint32_t tm = 0; //Time in milliseconds
+#if OS_WINDOWS
+        tm = GetTickCount();
+#else
+        //If linux or apple (posix compliant)
         struct timespec time;
-
         clock_gettime(CLOCK_MONOTONIC, &time);
-
-        t = ((uint64_t)time.tv_sec * 1e9l) + ((uint64_t)time.tv_nsec);
-
-        if((t - ctx->last_redraw) > 20e6)
+        tm = ((uint64_t)time.tv_sec * 1e3l) + ((uint64_t)time.tv_nsec / 1e6);
+        
+#endif
+        if(tm - ctx->last_redraw > 20)
         {
             GL_ERR(glUseProgram(ctx->compute_program))
             GL_ERR(
@@ -207,7 +211,7 @@ void gl_plotter_render(void *gctx, struct plot_params_t *params)
             params->updated = false;
             );
 
-            ctx->last_redraw = t;
+            ctx->last_redraw = tm;
         }
     }
 

@@ -36,11 +36,22 @@ This program is a simple GPU, double-floating-point precision plotter for Julia 
 
 #### Building 
 
-For Linux:
-`$ premake5 gmake2`
-`$ make`
+For Linux (and MacOSX, not tested yet)):
+Install SDL2 and glew through your package manager
+examble on debinan based systems:
+`# apt install libsdl2-dev libglew-dev`
+(Package name differ depending on distro)
+
+`$ premake5 gmake2`\
+`$ make`\
 `$ ./romanesco`
 
 For Windows:
-Comming soon&trade;
+You must use Visual Studio / Visual C compiler :
+The necessary dependencies (include, libs and dlls) are included in the windows folder.
+
+`> premake5 vs2019` (Or the installed vs version)\
+`> msbuild`\
+The exe should the be built.
+Don't forget to include the `SDL2.dll` file new to the executable. The dll is included in `windows\SDL2\lib\x64\SDL2.dll`.
 

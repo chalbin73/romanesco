@@ -64,13 +64,6 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
 {
     bool act = nk_item_is_any_active(ctx->nk_ctx);
 
-    if(!act)
-    {
-        nk_style_show_cursor(ctx->nk_ctx);
-    }
-
-    
-
     if(event.type == SDL_MOUSEWHEEL && !act)
     {
         plot_params.window.zoom += plot_params.window.zoom * ((_flp)event.wheel.y / 10);
@@ -113,7 +106,7 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
         prev_y_clk = n_y_clk;
         plot_params.updated = true;
     }
-    if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT && !act)
+    if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
     {
         mouse_pressed = false;
     }
@@ -246,7 +239,7 @@ int main(int argc, char* argv[])
     plot_params.updated = true;
     plot_params.fractal = FRAC_JULIA_SET;
 
-    window_create(&wctx, "Hello window !", 100, 100, 600, 400, SDL_WINDOW_RESIZABLE, true);
+    window_create(&wctx, "Romanesco plotter", 100, 100, 600, 400, SDL_WINDOW_RESIZABLE, true);
     window_set_resize_callback(&wctx, resize_callback);
     window_set_event_callback(&wctx, event_callback);
 

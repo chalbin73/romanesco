@@ -2,7 +2,6 @@
 #define __GL_ERROR_H__
 
 #include<GL/glew.h>
-#include<GLFW/glfw3.h>
 #include<assert.h>
 #include<log.h>
 #include<stdbool.h>
