@@ -42,8 +42,11 @@ void window_init_gui(struct window_ctx_t *ctx)
     
     nk_sdl_font_stash_begin(&atlas);
     nk_sdl_font_stash_end();
+    nk_style_load_all_cursors(ctx->nk_ctx, atlas->cursors);
 
     }
+
+    SDL_ShowCursor(SDL_DISABLE);
 }
 
 void window_set_resize_callback(struct window_ctx_t *ctx, void (*resize_callback)(int width, int height))

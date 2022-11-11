@@ -2,6 +2,7 @@
 //(c) 2022 Albin Chaboissier
 // This code is licensed under MIT license (see LICENSE.txt for details)
 
+#include <SDL2/SDL_mouse.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
@@ -69,6 +70,7 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
         plot_params.window.zoom += plot_params.window.zoom * ((_flp)event.wheel.y / 10);
         plot_params.updated = true;
     }
+
     if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !mouse_pressed && !act)
     {
         mouse_pressed = true;
@@ -84,6 +86,8 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
 
         prev_x_clk /= plot_params.window.zoom / plot_params.window.aspect_ratio;
         prev_y_clk /= plot_params.window.zoom;
+
+        nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_MOVE);
     }
     if(event.type == SDL_MOUSEMOTION && mouse_pressed && !act)
     {
@@ -106,8 +110,13 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
         prev_y_clk = n_y_clk;
         plot_params.updated = true;
     }
+    if(mouse_pressed && !act) 
+    {
+        nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_MOVE);
+    }
     if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
     {
+        nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_ARROW);
         mouse_pressed = false;
     }
     
@@ -118,8 +127,11 @@ void loop_callback(struct window_ctx_t *wctx)
     //GUI
     struct plot_params_t prev_par = plot_params;
     struct nk_context *nk_ctx = wctx->nk_ctx;
+
+
     if(nk_begin(nk_ctx, "Control", nk_rect(30, 30, 300, 500), NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE))
     {
+        
         nk_layout_row_dynamic(nk_ctx, 10, 1);
         nk_labelf(nk_ctx, NK_TEXT_ALIGN_LEFT, "Current position : ");
         nk_labelf(nk_ctx, NK_TEXT_ALIGN_LEFT, "%.15f +", plot_params.window.c_r);

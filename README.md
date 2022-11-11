@@ -38,9 +38,9 @@ This program is a simple GPU, double-floating-point precision plotter for Julia 
 
 For Linux (and MacOSX, not tested yet)):
 Install SDL2 and glew through your package manager
-examble on debinan based systems:
-`# apt install libsdl2-dev libglew-dev`
-(Package name differ depending on distro)
+examble on Debian based systems:\
+`# apt install libsdl2-dev libglew-dev`\
+(Package name differ depending on distro)\
 
 `$ premake5 gmake2`\
 `$ make`\

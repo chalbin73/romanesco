@@ -141,7 +141,7 @@ void gl_plotter_render(void *gctx, struct plot_params_t *params)
         tm = ((uint64_t)time.tv_sec * 1e3l) + ((uint64_t)time.tv_nsec / 1e6);
         
 #endif
-        if(tm - ctx->last_redraw > 20)
+        if(tm - ctx->last_redraw > 30)
         {
             GL_ERR(glUseProgram(ctx->compute_program))
             GL_ERR(
