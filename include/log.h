@@ -141,7 +141,7 @@ void __log_msg(int log_level, const char* filename, const int line_number, const
 #endif
 }
 
-/// Mallocs that checks pointer integrity
+/// Malloc that checks pointer integrity
 void *__xmalloc(unsigned long bytes, const char* filename, const int line, const char* function_name)
 {
     void* ptr = malloc(bytes);

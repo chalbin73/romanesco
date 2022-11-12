@@ -25,8 +25,8 @@ I'm planning to make some sort of an interface, where rendering backends could b
 - [ ] Clean code
   - [ ] Separate fractal renderers in different files
   - [ ] Clean CPU side code
-- [ ] Multiple coloring methods
-- [ ] Multiple coloring palettes
+- [x] Multiple coloring methods
+- [x] Multiple coloring palettes
 - [ ] Burning ship fractal
 - [ ] Newton's fractals
 - [ ] Save locations
@@ -52,7 +52,7 @@ examble on Debian based systems:\
 `$ make`\
 `$ ./romanesco`
 
-##### For Windows:
+##### For Windows: /!\ Current source is not windows compatible.
 You must use Visual Studio / Visual C compiler :
 The necessary dependencies (include, libs and dlls) are included in the windows folder.
 

@@ -4,6 +4,10 @@
 const uint MANDELBROT = 0;
 const uint JULIA = 1;
 
+const uint COL_MOD = 0; //Loops the color map as you zoom
+const uint COL_HIST = 1; //Uses the histogram method
+const uint COL_ITER = 2; //Maps the iterations on the color map
+
 layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (rgba32f, binding = 0) uniform image2D img_output;
@@ -31,6 +35,8 @@ uniform int height;
 uniform int fractal;
 
 uniform int pass;
+
+uniform int col_method;
 
 struct comp
 {
@@ -113,8 +119,21 @@ void main() {
 
             //imageStore(img_output, coords, vec4(num_iterations / iters));
             //imageStore(img_output, coords, vec4(hue));
-            int cpos = int(float(num_iterations) / float(iters) * 500) % 255;
-            vec4 c = imageLoad(img_color, ivec2(cpos, 0));
+
+            vec4 c = vec4(0.0);
+            if(col_method == COL_MOD)
+            {
+                int cpos = int(float(num_iterations) / float(iters) * 500) % 255;
+                c = imageLoad(img_color, ivec2(cpos, 0));
+            }else if(col_method == COL_HIST)
+            {
+                c = imageLoad(img_color, ivec2(hue * 255.0, 0));
+            }else
+            {
+                int cpos = int(255.0 * float(num_iterations) / float(iters));
+                c = imageLoad(img_color, ivec2(cpos, 0));
+            }
+
             //vec4 c = imageLoad(img_color, ivec2(hue * 255, 0));
             imageStore(img_output, coords, c);
             //imageStore(img_output, coords, vec4(hsv2rgb(vec3(hue, 1.0, 1.0)), 1.0));
