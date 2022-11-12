@@ -5,7 +5,6 @@ compile_commands/
 compile_commands.json
 Makefile
 *.ppm
-*.png
 romanesco
 *.log
 *.make

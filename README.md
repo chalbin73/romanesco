@@ -3,6 +3,12 @@
 
 This program is a simple GPU, double-floating-point precision plotter for Julia sets and Mandlebrot sets. It made with OpenGL compute-shaders written in C.
 
+#### Currently
+
+Making the code-base more versatile, modular.
+I want this software to be able to accept some sort of modules, that would permit the drawing of a broader range of fractals (not just mandelbrot and julia sets)
+I'm planning to make some sort of an interface, where rendering backends could be easily implemented.
+
 #### Features
 
 - [x] Julia sets with live constant changing

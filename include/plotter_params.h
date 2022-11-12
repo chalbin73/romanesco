@@ -15,7 +15,7 @@ typedef double _flp;
 
 enum plotting_method
 {
-    PLOT_CPU = 0,
+    PLOT_CPU = 0, //Not implemented
     PLOT_GL
 };
 
@@ -64,6 +64,7 @@ struct plot_params_t
     enum fractal fractal;
 };
 
+//Interface to a plotting method
 struct plotter_protocol_t
 {
     void (*plot_init)(void *ctx, uint32_t width, uint32_t height);

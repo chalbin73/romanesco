@@ -60,7 +60,8 @@ extern void *__xmalloc(unsigned long bytes, const char* filename, const int line
 #define VARSTR(v) LOGF("%s: %s", #v, v);
 
 //Assert fail (crash)
-#define ASSERT(s, m, ...) if(s) {} else {ERRF("Assertion failed ( %s ) :", #s); __log_msg(4, __FILE__, __LINE__, __func__, m, __VA_ARGS__); abort();}
+#define ASSERT(s, m) if(s) {} else {ERRF("Assertion failed ( %s ) :", #s); __log_msg(4, __FILE__, __LINE__, __func__, m); abort();}
+#define ASSERTF(s, m, ...) if(s) {} else {ERRF("Assertion failed ( %s ) :", #s); __log_msg(4, __FILE__, __LINE__, __func__, m, __VA_ARGS__); abort();}
 
 //Assert fail (prints success)
 #define ASSERTS(s, m) if(s) {__log_msg(1, __FILE__, __LINE__, __func__, "Assertion passes %s", #s);} else {ERRF("Assertion failed ( %s ) :", #s); __log_msg(4, __FILE__, __LINE__,__func__, m); abort();}

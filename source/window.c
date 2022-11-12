@@ -12,7 +12,7 @@ void window_create(struct window_ctx_t *ctx, const char* title, uint32_t x, uint
     flags |= SDL_WINDOW_ALLOW_HIGHDPI;
 
     int err_sdl = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS);
-    ASSERT(!err_sdl, "Sdl initiliazation failed ! Error code : %d (%x).", err_sdl, err_sdl);
+    ASSERTF(!err_sdl, "Sdl initiliazation failed ! Error code : %d (%x).", err_sdl, err_sdl);
 
     SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -38,7 +38,8 @@ void window_init_gui(struct window_ctx_t *ctx)
 {
     ctx->nk_ctx = nk_sdl_init(ctx->window);
 
-    {struct nk_font_atlas *atlas;
+    {
+    struct nk_font_atlas *atlas;
     
     nk_sdl_font_stash_begin(&atlas);
     nk_sdl_font_stash_end();

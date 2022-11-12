@@ -12,6 +12,10 @@
 #include<time.h>
 #include<stdbool.h>
 
+//Cool single header files to load alot of formats :
+// https://github.com/nothings/stb
+#include<stb_image.h>
+
 //Include windows header for Clock
 #include<os_name.h>
 #if OS_WINDOWS
@@ -45,6 +49,7 @@ typedef struct
 
     //Texture on which the rendering is done
     uint32_t render_texture_ID;
+    uint32_t coloring_texture_ID;
 
     //OpenGL buffers
     uint32_t quad_VBO;
@@ -93,6 +98,7 @@ typedef struct
 
 
 void gl_plotter_init(void *gctx, uint32_t width, uint32_t height);
+void gl_plotter_load_coloring_scheme(void *gctx, char *filename);
 void gl_plotter_viewport_size(void *gctx, uint32_t width, uint32_t height);
 void gl_plotter_resolution(void *gctx, uint32_t width, uint32_t height);
 void gl_plotter_render(void *gctx, struct plot_params_t *params);

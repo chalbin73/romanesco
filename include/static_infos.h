@@ -1,3 +1,7 @@
+//Romanesco project
+//(c) 2022 Albin Chaboissier
+// This code is licensed under MIT license (see LICENSE.txt for details)
+
 #ifndef __STATIC_INFOS_H__
 #define __STATIC_INFOS_H__
 

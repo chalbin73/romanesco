@@ -2,12 +2,12 @@
 //(c) 2022 Albin Chaboissier
 // This code is licensed under MIT license (see LICENSE.txt for details)
 
+#include "gl_plotter.h"
 #include <SDL2/SDL_mouse.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/types.h>
 #define GLEW_STATIC
-
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -28,7 +28,6 @@
 #define LOG_IMPLEMENTATION
 #include<log.h>
 
-
 #define MAX_VERTEX_MEMORY 512 * 1024
 #define MAX_ELEMENT_MEMORY 128 * 1024
 
@@ -44,6 +43,9 @@
 #define NK_SDL_GL3_IMPLEMENTATION
 #include <nuklear.h>
 #include <nuklear_sdl_gl3.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include<stb_image.h>
 
 struct plot_params_t plot_params = {0};
 struct plot_ctx_t plt_ctx;
@@ -257,7 +259,7 @@ int main(int argc, char* argv[])
 
     //GLEW Initialization
     int gerr = glewInit();
-    ASSERT(gerr == GLEW_OK, "Glew initialization failed ! Error code : %d !", gerr);
+    ASSERTF(gerr == GLEW_OK, "Glew initialization failed ! Error code : %d !", gerr);
 
 
     plot_params.iterations = 100;
@@ -269,6 +271,7 @@ int main(int argc, char* argv[])
     plotting_init(PLOT_GL, &plt_ctx, 600, 400);
     window_init_gui(&wctx);
     plotting_resolution(&plt_ctx, 1920, 1080);
+    gl_plotter_load_coloring_scheme(plt_ctx.ctx, "blue_yellow_map.png");
 
     window_loop(&wctx, loop_callback);
 

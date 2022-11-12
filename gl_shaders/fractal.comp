@@ -7,6 +7,8 @@ const uint JULIA = 1;
 layout (local_size_x = 16, local_size_y = 16) in;
 
 layout (rgba32f, binding = 0) uniform image2D img_output;
+//Coloring image
+layout (rgba32f, binding = 1) uniform image2D img_color;
 
 uniform float rp;
 uniform float ip;
@@ -107,9 +109,14 @@ void main() {
 
             //hue /= float(total_histo);
 
-            hue = pow(10000000, hue - 1);
+            hue = pow(100000000, hue - 1);
 
-            imageStore(img_output, coords, vec4(hue));
+            //imageStore(img_output, coords, vec4(num_iterations / iters));
+            //imageStore(img_output, coords, vec4(hue));
+            int cpos = int(float(num_iterations) / float(iters) * 500) % 255;
+            vec4 c = imageLoad(img_color, ivec2(cpos, 0));
+            //vec4 c = imageLoad(img_color, ivec2(hue * 255, 0));
+            imageStore(img_output, coords, c);
             //imageStore(img_output, coords, vec4(hsv2rgb(vec3(hue, 1.0, 1.0)), 1.0));
         }
         //pixel = vec4(1.0);
