@@ -33,6 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif
 
+#undef UNICODE
+#undef _UNICODE
+
 #if ((defined _UNICODE) && !(defined UNICODE))
 #define UNICODE
 #endif

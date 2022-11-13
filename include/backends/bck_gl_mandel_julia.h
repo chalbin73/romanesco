@@ -11,9 +11,13 @@
 //Minimum time between redraws
 #define MIN_REDRAW_MS 30
 
-#define COLOR_MAPS_DIR "color_maps/"
-
 #include <os_name.h>
+#if OS_WINDOWS
+    #define COLOR_MAPS_DIR "color_maps\\"
+#else
+    #define COLOR_MAPS_DIR "color_maps/"
+#endif
+
 #if OS_WINDOWS
     #include <window.h> //Used for GetTickCount() function on windows
 #endif

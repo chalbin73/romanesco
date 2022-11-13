@@ -147,10 +147,10 @@ uint32_t bck_gl_mj_init(void *gctx)
     //Load color maps ui images
     for(int i = 0; i < ctx->color_maps_count; i++)
     {
+        LOGF("\tLoading \"%s\".", ctx->color_maps[i]);
         char filename[4096] = "";
         strcat(filename, COLOR_MAPS_DIR); //TODO: Make safe
         strcat(filename, ctx->color_maps[i]);
-        LOGF("\tLoading \"%s\".", filename);
         ctx->color_maps_imgs[i] = nk_image_id((int)load_image_gl_rgb(filename));
     }
 
