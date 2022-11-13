@@ -39,6 +39,8 @@ I'm planning to make some sort of an interface, where rendering backends could b
 - GLEW for OpenGL
 - Nuklear for UI
 - Posix for file I/O
+- tinydir.h (included) to scan directories
+- stb_image.h (included) to read images
 
 ## Building 
 
@@ -52,7 +54,7 @@ examble on Debian based systems:\
 `$ make`\
 `$ ./romanesco`
 
-##### For Windows: /!\ Current source should be windows compatible, but not tested
+##### For Windows:
 You must use Visual Studio / Visual C compiler :
 The necessary dependencies (include, libs and dlls) are included in the windows folder.
 
@@ -61,5 +63,5 @@ The necessary dependencies (include, libs and dlls) are included in the windows 
 `> premake5 vs2019` (Or the installed vs version)\
 `> msbuild`\
 The exe should the be built.
-Don't forget to include the `SDL2.dll` file new to the executable. The dll is included in `windows\SDL2\lib\x64\SDL2.dll`.
+Don't forget to include the `SDL2.dll` file next to the executable. The dll is included in `windows\SDL2\lib\x64\SDL2.dll`.
 
