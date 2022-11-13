@@ -1,10 +1,10 @@
 #ifndef __SHADER_H__
 #define __SHADER_H__
-#include<stdlib.h>
-#include<stdio.h>
-#include<log.h>
-#include<GL/glew.h>
-#include<assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <log.h>
+#include <GL/glew.h>
+#include <assert.h>
 
 /*
     This translation unit provides a way to load, and compile OpenGL shaders

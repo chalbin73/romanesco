@@ -56,6 +56,8 @@ examble on Debian based systems:\
 You must use Visual Studio / Visual C compiler :
 The necessary dependencies (include, libs and dlls) are included in the windows folder.
 
+/!\ Current source generates alot of warnings on windows.
+
 `> premake5 vs2019` (Or the installed vs version)\
 `> msbuild`\
 The exe should the be built.

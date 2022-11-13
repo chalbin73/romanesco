@@ -4,9 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <dirent.h>
 #include <log.h>
-#include <dirent.h>
 #include <string.h>
 #include <GL/glew.h>
 #include <stb_image.h>

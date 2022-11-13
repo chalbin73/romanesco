@@ -6,9 +6,9 @@
     (It is mostly there to prevent circular dependencies)
 */
 
-#include<stdint.h>
-#include<stdlib.h>
-#include<stdbool.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 //Precision used
 typedef double _flp;

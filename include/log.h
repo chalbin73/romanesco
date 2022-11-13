@@ -7,10 +7,10 @@
     And then can be included normaly throuhout the program
 */
 
-#include<stdlib.h>
-#include<stdio.h>
-#include<stdarg.h>
-#include<inttypes.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <inttypes.h>
 
 #define ANSI_RES "\033[0m"
 

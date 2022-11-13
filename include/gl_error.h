@@ -1,10 +1,10 @@
 #ifndef __GL_ERROR_H__
 #define __GL_ERROR_H__
 
-#include<GL/glew.h>
-#include<assert.h>
-#include<log.h>
-#include<stdbool.h>
+#include <GL/glew.h>
+#include <assert.h>
+#include <log.h>
+#include <stdbool.h>
 
 /*
   This translation unit provides methods to catch OpenGL errors

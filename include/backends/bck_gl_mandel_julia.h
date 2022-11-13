@@ -13,9 +13,9 @@
 
 #define COLOR_MAPS_DIR "color_maps/"
 
-#include<os_name.h>
+#include <os_name.h>
 #if OS_WINDOWS
-    #include<window.h> //Used for GetTickCount() function on windows
+    #include <window.h> //Used for GetTickCount() function on windows
 #endif
 
 #define NK_INCLUDE_FIXED_TYPES
