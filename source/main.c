@@ -128,7 +128,6 @@ void resize_callback(int w, int h)
 
 int main(int argc, char* argv[])
 {
-
     START_LOG_FILE("romanesco_last.log");
 
     SUCF("Welcome to the Romanesco plotter version %s!", VERSION_TEXT);

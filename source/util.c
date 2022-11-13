@@ -2,6 +2,8 @@
 //(c) 2022 Albin Chaboissier
 // This code is licensed under MIT license (see LICENSE.txt for details)
 
+#include <stdint.h>
+#include <string.h>
 #include <util.h>
 
 
@@ -15,7 +17,62 @@ double map(double v, double v_min, double v_max, double out_min, double out_max)
     return (((v - v_min) / (v_max - v_min)) * (out_max - out_min)) + out_min;
 }
 
-char** get_files_in_dir(char* dir_path, size_t *filecount)
+size_t get_file_count_in_dir(char* dir_path)
+{
+    size_t count = 0;
+    tinydir_dir dir;
+    tinydir_open(&dir, dir_path);
+
+    while (dir.has_next)
+    {
+        tinydir_file file;
+        tinydir_readfile(&dir, &file);
+
+        if (!file.is_dir)
+        {
+            count++;
+        }
+
+        tinydir_next(&dir);
+    }
+
+    tinydir_close(&dir);
+    return count;
+}
+
+char **get_files_in_dir(char* dir_path, size_t *filecount)
+{
+    size_t count = get_file_count_in_dir(dir_path);
+
+    //allocate some memory for names
+    char **result = xmalloc(sizeof(char*) * count);
+
+    tinydir_dir dir;
+    tinydir_open(&dir, dir_path);
+    uint32_t i = 0;
+    while (dir.has_next)
+    {
+        tinydir_file file;
+        tinydir_readfile(&dir, &file);
+
+        if (!file.is_dir)
+        {
+            result[i] = xmalloc(sizeof(char) * strlen(file.name));
+            strcpy(result[i], file.name); //TODO: Make safer.
+            i++;
+        }
+
+        tinydir_next(&dir);
+    }
+
+    tinydir_close(&dir);
+
+    *filecount = count;
+
+    return result;
+}
+
+/* char** get_files_in_dir(char* dir_path, size_t *filecount)
 {
     size_t c = 0;
 
@@ -58,7 +115,7 @@ char** get_files_in_dir(char* dir_path, size_t *filecount)
 
     *filecount = c;
     return result;
-}
+} */
 
 uint32_t load_image_gl_rgb(char* image_path)
 {

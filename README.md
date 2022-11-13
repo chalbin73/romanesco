@@ -52,7 +52,7 @@ examble on Debian based systems:\
 `$ make`\
 `$ ./romanesco`
 
-##### For Windows: /!\ Current source is not windows compatible.
+##### For Windows: /!\ Current source should be windows compatible, but not tested
 You must use Visual Studio / Visual C compiler :
 The necessary dependencies (include, libs and dlls) are included in the windows folder.
 
