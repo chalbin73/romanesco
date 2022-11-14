@@ -1,7 +1,7 @@
 # Romanesco
 #### A simple GPU Julia sets and Mandelbrot set plotter
 
-This program is a simple GPU, double-floating-point precision plotter for Julia sets and Mandlebrot sets. It made with OpenGL compute-shaders written in C.
+This program is a simple GPU, double-floating-point precision plotter for Julia sets and Mandlebrot sets. It is made with OpenGL compute-shaders and it is written in C.
 
 #### Currently
 
