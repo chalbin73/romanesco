@@ -27,6 +27,7 @@ I'm planning to make some sort of an interface, where rendering backends could b
   - [ ] Clean CPU side code
 - [x] Multiple coloring methods
 - [x] Multiple coloring palettes
+- [ ] Buddhabrot fractal
 - [ ] Burning ship fractal
 - [ ] Newton's fractals
 - [ ] Save locations
