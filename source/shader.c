@@ -103,8 +103,10 @@ uint32_t make_compute_shader(char* path)
     LOGF("Loading compute shader %s", path);
     print_work_group_capabilities();
 
+    //Create GL shader
     int cs = glCreateShader(GL_COMPUTE_SHADER);
 
+    //Open file
     FILE* fp = fopen(path, "r");
     if(!fp)
     {
@@ -113,26 +115,34 @@ uint32_t make_compute_shader(char* path)
     char* source = (char*)malloc(TEMP_SOURCE_BUFFER);
     assert(source);
 
-    LOG("Reading source");
+    //Reading source
     size_t s = read_whole_file(fp, source, TEMP_SOURCE_BUFFER);
+    (void)s;
 
+    //Recursive include
+    char include_error[512];
+    char *full_source = stb_include_string(source, NULL, "gl_shaders", NULL, include_error);
 
-    LOG("Loading source");
+    LOGF("Got code : %s\n", full_source);
 
-    const char *sourc_const = source;
-    const int s_const = s;
+    ASSERTF(full_source, "GLSL compute shader preprocessing failed :\n%s", include_error);
+
+    //Loading source
+    const char *sourc_const = full_source;
+    const int s_const = strlen(full_source);
     glShaderSource(cs, 1, &sourc_const, &s_const);
 
-    LOG("Compiling compute shader");
+    //Compiling compute shader
     compile_shader(cs, GL_COMPUTE_SHADER);
 
-    LOG("Linking compute shader");
+    //Linking compute shader
     uint32_t prog = glCreateProgram();
 
     glAttachShader(prog, cs);
     glLinkProgram(prog);
     glDeleteShader(cs);
 
+    free(full_source);
     return prog; 
 }
 

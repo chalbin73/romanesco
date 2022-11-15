@@ -1,0 +1,105 @@
+//Contains functions to exponenentiate a complex number
+
+comp exp_moivre(comp num, double p)
+{
+    //Polarisation
+    double module = sqrt((num.r*num.r) + (num.i*num.i));
+    double arg = double(0.0);
+    if(num.i >= 0)
+    {
+        arg = acos(float(num.r/module));
+    }
+    else
+    {
+        arg = -acos(float(num.r/module));
+    }
+
+
+    // //Moivre
+    arg = arg*p;
+    module = pow(float(module), float(p));
+
+    double r = module * cos(float(arg));
+    double i = module * sin(float(arg));
+
+    return comp(r, i);
+}
+
+comp comp_mul(comp a, comp b)
+{
+    return comp(
+        (a.r * b.r) - (a.i * b.i),
+        (a.r * b.i) + (a.i * b.r)
+    );
+}
+
+comp _exp_norm_2_3(comp num, int p)
+{
+    switch(p)
+    {
+        case 0:
+            return comp(1.0, 0.0);
+            break;
+
+        case 1:
+            return num;
+            break;
+        
+        case 2:
+            return comp(
+                (num.r * num.r) - (num.i * num.i),
+                (num.r * num.i * 2.0)
+            );
+            break;
+
+        case 3:
+            return comp(
+                (num.r * num.r * num.r) - (3.0 * num.r * num.i * num.i),
+                (3.0 * num.r * num.r * num.i) - (num.i * num.i * num.i)
+            );
+            break;
+    }
+    return comp(0.0, 0.0);
+}
+
+comp exp_norm(comp num, int p)
+{
+    switch(p)
+    {
+        case 0:
+            return comp(1.0, 0.0);
+            break;
+
+        case 1:
+            return num;
+            break;
+        
+        case 2:
+            return comp(
+                (num.r * num.r) - (num.i * num.i),
+                (num.r * num.i * 2.0)
+            );
+            break;
+
+        case 3:
+            return comp(
+                (num.r * num.r * num.r) - (3.0 * num.r * num.i * num.i),
+                (3.0 * num.r * num.r * num.i) - (num.i * num.i * num.i)
+            );
+            break;
+
+        case 4:
+            comp sq = _exp_norm_2_3(num, 2);
+            return comp_mul(sq, sq);
+            break;
+
+        case 5:
+            return comp_mul(_exp_norm_2_3(num, 3), _exp_norm_2_3(num, 2));
+            break;
+
+        default:
+            return comp(0.0, 0.0);
+            break;
+    }
+    return comp(0.0, 0.0);
+}

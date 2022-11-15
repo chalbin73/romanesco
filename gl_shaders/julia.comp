@@ -1,0 +1,30 @@
+//Contains functions for julia sets rendering
+
+int julia(double x, double y, double rp_c, double ip_c)
+{
+    double r = double(x);
+    double i = double(y);
+
+    int iter = 1;
+    while((r*r + i*i) < double(4) && iter < iters)
+    {
+        iter ++;
+
+        if(moivre != 0)
+        {
+            comp n = exp_moivre(comp(r, i), exponent);
+            r = n.r;
+            i = n.i;
+        }else
+        {
+            comp n = exp_norm(comp(r, i), int(floor(exponent)));
+            r = n.r;
+            i = n.i;
+        }
+
+        r += double(rp_c);
+        i += double(ip_c);
+    }
+
+    return iter;
+}

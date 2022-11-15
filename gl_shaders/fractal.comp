@@ -1,19 +1,23 @@
 #version 440
 
-//Fractal types
+//Fractal types "enum"
 const uint MANDELBROT = 0;
 const uint JULIA = 1;
 
+//Coloring methods "enum"
 const uint COL_MOD = 0; //Loops the color map as you zoom
 const uint COL_HIST = 1; //Uses the histogram method
 const uint COL_ITER = 2; //Maps the iterations on the color map
 
+//Local workgroupz
 layout (local_size_x = 16, local_size_y = 16) in;
 
+//Output texture
 layout (rgba32f, binding = 0) uniform image2D img_output;
-//Coloring image
+//Coloring map
 layout (rgba32f, binding = 1) uniform image2D img_color;
 
+//Uniforms
 uniform float rp;
 uniform float ip;
 
@@ -28,6 +32,7 @@ uniform double exponent;
 uniform double aspect_ratio;
 
 uniform int moivre;
+uniform int compute_histogram;
 
 uniform int width;
 uniform int height;
@@ -37,316 +42,123 @@ uniform int fractal;
 uniform int pass;
 
 uniform int col_method;
+//Uniforms end
 
+//Complex number
 struct comp
 {
     double r;
     double i;
 };
 
-struct pos_col
-{
-    double pos;
-    vec3 color;
-};
-
+//Histogram SSBO when using histogram coloring
 layout(std430, binding = 3) buffer histo_data
 {
     uint iter_histo[];
 };
 
+//Total used in histogram coloring
 layout(std430, binding = 4) buffer histo_tot
 {
     uint total_histo;
 };
 
-
-double map(double v, double v_min, double v_max, double out_min, double out_max);
-int julia(double x, double y);
-int mandelbrot(double x, double y);
-vec3 hsv2rgb(vec3 c);
-
-comp exp_moivre(comp num, double p);
-comp _exp_norm_2_3(comp num, double p);
-comp exp_norm(comp num, double p);
-comp comp_mul(comp a, comp b);
+//Using STB_INCLUDE library
+#include "util.comp"
+#include "exp.comp"
+#include "mandelbrot.comp"
+#include "julia.comp"
 
 void main() {
+    //Coords on the texture
     ivec2 coords = ivec2(gl_GlobalInvocationID);
 
+    //Coords on the selected window (in the complex plane)
     dvec2 npos = dvec2(map(coords.x, 0, width, -1.0, 1.0) * aspect_ratio, map(coords.y, 0, height, -1.0, 1.0)) / float(z);
     npos.x += r;
     npos.y += i;
 
+    //Check if the current pixel is visible in the context (prevents computing usless pixels)
     if(coords.x < width && coords.y < height)
     {
         if(pass == 0)
         {
+            // ------------ PASS 0 ------------
+            // PASS 0 : Compute the number of iterations per pixels
             vec4 pixel;
+            int iter_esc = 0;
             if(fractal == MANDELBROT)
             {
-                pixel = vec4(float(mandelbrot(npos.x, npos.y)));
+                iter_esc = mandelbrot(npos.x, npos.y);
             }else if(fractal == JULIA)
             {
-                pixel = vec4(float(julia(npos.x, npos.y)));
-            }else
-            {
-                pixel = vec4(1.0, 0.0, 1.0, 1.0);
+                iter_esc = julia(npos.x, npos.y, rp, ip);
             }
-            imageStore(img_output, coords, pixel);
+
+            if(col_method == COL_HIST || compute_histogram != 0)
+            {
+                atomicAdd(iter_histo[iter_esc], 1);
+
+                if(iter_esc != iters)
+                {
+                    atomicAdd(total_histo, 1);
+                }
+            }
+
+            
+
+            //Store the number of iterations in the texture
+            imageStore(img_output, coords, vec4(float(iter_esc)));
         }else if(pass == 1)
         {
+            // ------------ PASS 1 ------------
+            // PASS 1: Use the previously computed iterations to apply color
+
+            //Get the number of iterations from the image
             float num_iterations = imageLoad(img_output, coords).x;
-            if(num_iterations >= float(iters) - 0.001f)
-            {
-                imageStore(img_output, coords, vec4(0.0));
-                return;
-            }
-            // else
-            // {
-            //     imageStore(img_output, coords, vec4(1.0));
-            // }
-            // return;
-            float hue = 0;
-            for(int i = 0; i <= int(num_iterations); i++)
-            {
-                hue += float(iter_histo[i]) / float(total_histo);
-            }
-
-            //hue /= float(total_histo);
-
-            hue = pow(100000000, hue - 1);
-
-            //imageStore(img_output, coords, vec4(num_iterations / iters));
-            //imageStore(img_output, coords, vec4(hue));
 
             vec4 c = vec4(0.0);
             if(col_method == COL_MOD)
             {
                 int cpos = int(float(num_iterations) / float(iters) * 500) % 255;
+
+                //Load from color_map
                 c = imageLoad(img_color, ivec2(cpos, 0));
             }else if(col_method == COL_HIST)
             {
+                float hue = 0;
+                if(num_iterations >= float(iters) - 0.001f)
+                {
+                    c = vec4(0.0);
+                }
+                for(int i = 0; i <= int(num_iterations); i++)
+                {
+                    hue += float(iter_histo[i]) / float(total_histo);
+                }
+                if(hue > 1.0)
+                {
+                    c = vec4(1.0, 0.0, 1.0, 1.0);
+                }else
+                {
+                }
+                hue = pow(100000000, hue - 1);
+
+                //Load from color_map
                 c = imageLoad(img_color, ivec2(hue * 255.0, 0));
             }else
             {
                 int cpos = int(255.0 * float(num_iterations) / float(iters));
+
+                //Load from color_map
                 c = imageLoad(img_color, ivec2(cpos, 0));
             }
 
-            //vec4 c = imageLoad(img_color, ivec2(hue * 255, 0));
+            if(num_iterations == iters)
+            {
+                c = vec4(0.0);
+            }
+
             imageStore(img_output, coords, c);
-            //imageStore(img_output, coords, vec4(hsv2rgb(vec3(hue, 1.0, 1.0)), 1.0));
         }
-        //pixel = vec4(1.0);
     }
-}
-
-comp _exp_norm_2_3(comp num, int p)
-{
-    switch(p)
-    {
-        case 0:
-            return comp(1.0, 0.0);
-            break;
-
-        case 1:
-            return num;
-            break;
-        
-        case 2:
-            return comp(
-                (num.r * num.r) - (num.i * num.i),
-                (num.r * num.i * 2.0)
-            );
-            break;
-
-        case 3:
-            return comp(
-                (num.r * num.r * num.r) - (3.0 * num.r * num.i * num.i),
-                (3.0 * num.r * num.r * num.i) - (num.i * num.i * num.i)
-            );
-            break;
-    }
-    return comp(0.0, 0.0);
-}
-
-comp exp_norm(comp num, int p)
-{
-    switch(p)
-    {
-        case 0:
-            return comp(1.0, 0.0);
-            break;
-
-        case 1:
-            return num;
-            break;
-        
-        case 2:
-            return comp(
-                (num.r * num.r) - (num.i * num.i),
-                (num.r * num.i * 2.0)
-            );
-            break;
-
-        case 3:
-            return comp(
-                (num.r * num.r * num.r) - (3.0 * num.r * num.i * num.i),
-                (3.0 * num.r * num.r * num.i) - (num.i * num.i * num.i)
-            );
-            break;
-
-        case 4:
-            comp sq = _exp_norm_2_3(num, 2);
-            return comp_mul(sq, sq);
-            break;
-
-        case 5:
-            return comp_mul(_exp_norm_2_3(num, 3), _exp_norm_2_3(num, 2));
-            break;
-
-        default:
-            return comp(0.0, 0.0);
-            break;
-    }
-    return comp(0.0, 0.0);
-}
-
-int julia(double x, double y)
-{
-    // double r = double(x);
-    // double i = double(y);
-
-    double r = double(x);
-    double i = double(y);
-
-    int iter = 1;
-    while((r*r + i*i) < double(4) && iter < iters)
-    {
-        iter ++;
-
-        if(moivre != 0)
-        {
-            comp n = exp_moivre(comp(r, i), exponent);
-            r = n.r;
-            i = n.i;
-        }else
-        {
-            comp n = exp_norm(comp(r, i), int(floor(exponent)));
-            r = n.r;
-            i = n.i;
-        }
-
-        r += double(rp);
-        i += double(ip);
-    }
-
-    atomicAdd(iter_histo[iter], 1);
-
-    if(iter == iters)
-    {
-        return iter;
-    }
-
-    atomicAdd(total_histo, 1);
-
-
-    double module = sqrt((r*r)+(i*i));
-    float v = iter - log2(log2(float(module)));
-    //return vec4(hsv2rgb(vec3(v/iters, 1.0f, 1.0f)), 1.0f);
-    return iter;
-}
-
-int mandelbrot(double x, double y)
-{
-    // double r = double(x);
-    // double i = double(y);
-
-    double r = double(x);
-    double i = double(y);
-
-    int iter = 0;
-    while((r*r + i*i) < double(4) && iter < iters)
-    {
-        iter ++;
-
-
-        if(moivre != 0)
-        {
-            comp n = exp_moivre(comp(r, i), exponent);
-            r = n.r;
-            i = n.i;
-        }else
-        {
-            comp n = exp_norm(comp(r, i), int(floor(exponent)));
-            r = n.r;
-            i = n.i;
-        }
-
-        r += x;
-        i += y;
-    }
-
-    atomicAdd(iter_histo[iter], 1);
-
-    if(iter == iters)
-    {
-        return iter;
-    }
-
-    atomicAdd(total_histo, 1);
-
-    double module = sqrt((r*r)+(i*i));
-    float v = iter - log2(log2(float(module)));
-
-    float nv = int(pow((v / iters) * 360, 1.5)) % 360;
-
-    //return vec4(hsv2rgb(vec3(nv/360, 1.0f, 1.0f)), 1.0f);
-    return iter;
-}
-
-comp exp_moivre(comp num, double p)
-{
-    //Polarisation
-    double module = sqrt((num.r*num.r) + (num.i*num.i));
-    double arg = double(0.0);
-    if(num.i >= 0)
-    {
-        arg = acos(float(num.r/module));
-    }
-    else
-    {
-        arg = -acos(float(num.r/module));
-    }
-
-
-    // //Moivre
-    arg = arg*p;
-    module = pow(float(module), float(p));
-
-    double r = module * cos(float(arg));
-    double i = module * sin(float(arg));
-
-    return comp(r, i);
-}
-
-comp comp_mul(comp a, comp b)
-{
-    return comp(
-        (a.r * b.r) - (a.i * b.i),
-        (a.r * b.i) + (a.i * b.r)
-    );
-}
-
-vec3 hsv2rgb(vec3 c)
-{
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
-
-double map(double v, double v_min, double v_max, double out_min, double out_max)
-{
-    return (((v - v_min) / (v_max - v_min)) * (out_max - out_min)) + out_min;
 }

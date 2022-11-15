@@ -153,7 +153,9 @@ typedef struct
     uint32_t pass_loc;
 
     uint32_t col_method_loc;
+    uint32_t compute_histogram_loc;
 
+    //Last redraw time in millis
     uint64_t last_redraw;
 
     //Histogram coloring SSBOs:
@@ -164,6 +166,7 @@ typedef struct
     //Data for UI
     int res_width_ui;
     int res_height_ui;
+    bool show_iteration_histogram;
 
     //Color maps paths
     size_t color_maps_count;

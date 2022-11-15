@@ -118,6 +118,7 @@ uint32_t bck_gl_mj_init(void *gctx)
     GL_ERR(ctx->height_loc = glGetUniformLocation(ctx->compute_program, "height"));
     GL_ERR(ctx->pass_loc = glGetUniformLocation(ctx->compute_program, "pass"));
     GL_ERR(ctx->col_method_loc = glGetUniformLocation(ctx->compute_program, "col_method"));
+    GL_ERR(ctx->compute_histogram_loc = glGetUniformLocation(ctx->compute_program, "compute_histogram"));
 
     //Setting defaults:
     ctx->window.aspect_ratio = 1920.0/1080.0;
@@ -212,6 +213,7 @@ uint32_t bck_gl_mj_render(void *gctx)
                 glUniform1i(ctx->m_loc, params->use_moivre);
                 glUniform1i(ctx->pass_loc, 0);
                 glUniform1i(ctx->col_method_loc, params->color_method);
+                glUniform1i(ctx->compute_histogram_loc, ctx->compute_histogram_loc);
             );
 
 
@@ -251,8 +253,11 @@ uint32_t bck_gl_mj_render(void *gctx)
                 glBindBuffer(GL_SHADER_STORAGE_BUFFER, ctx->iteration_histogram_ssbo);
                 glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, ctx->iteration_histogram_ssbo);
 
-                //Reading histogram:
-                glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(uint32_t) * HISTO_SSBO_LENGTH, ctx->histo);
+                //Reading histogram (only if shown):
+                if(ctx->show_iteration_histogram)
+                {
+                    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(uint32_t) * HISTO_SSBO_LENGTH, ctx->histo);
+                }
             );
 
             // PASS 2 (Coloring pass)
@@ -464,21 +469,26 @@ uint32_t bck_gl_mj_ui_control(void *gctx, struct nk_context *nk_ctx)
         bck_gl_mj_plot_save(gctx, "out.ppm");
     }
    
+    //Histogram
     nk_layout_row_dynamic(nk_ctx, 20, 1);
     nk_label(nk_ctx, "Iteration histogram", NK_TEXT_ALIGN_CENTERED);
-    nk_layout_row_dynamic(nk_ctx, 200, 1);
-    int max = 0;
-    for(int i = 0; i < params->max_iterations; i++)
+    ctx->show_iteration_histogram = nk_check_label(nk_ctx, "Show iteration histogram", ctx->show_iteration_histogram);
+    if(ctx->show_iteration_histogram)
     {
-        max = ctx->histo[i] > max ? ctx->histo[i] : max;
-    }
-    if(nk_chart_begin(nk_ctx, NK_CHART_LINES, params->max_iterations, 0.0f, (float)max))
-    {
+        nk_layout_row_dynamic(nk_ctx, 200, 1);
+        int max = 1;
         for(int i = 0; i < params->max_iterations; i++)
         {
-            nk_chart_push(nk_ctx, (float)ctx->histo[i]);
+            max = ctx->histo[i] > max ? ctx->histo[i] : max;
         }
-        nk_chart_end(nk_ctx);
+        if(nk_chart_begin(nk_ctx, NK_CHART_LINES, params->max_iterations, 0.0f, (float)max))
+        {
+            for(int i = 0; i < params->max_iterations; i++)
+            {
+                nk_chart_push(nk_ctx, (float)ctx->histo[i]);
+            }
+            nk_chart_end(nk_ctx);
+        }
     }
 
 
@@ -560,6 +570,7 @@ void gl_mj_load_coloring_scheme(void *gctx, char *filename)
     }
 
     //Generate texture
+    GL_ERR(glDeleteTextures(1, &ctx->coloring_texture_ID));
     GL_ERR(glGenTextures(1, &ctx->coloring_texture_ID));
     GL_ERR(glBindTexture(GL_TEXTURE_2D, ctx->coloring_texture_ID));
         GL_ERR(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));

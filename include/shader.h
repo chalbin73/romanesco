@@ -5,6 +5,10 @@
 #include <log.h>
 #include <GL/glew.h>
 #include <assert.h>
+#include <string.h>
+
+// To create includes in GLSL
+#include <stb_include.h>
 
 /*
     This translation unit provides a way to load, and compile OpenGL shaders

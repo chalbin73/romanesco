@@ -1,0 +1,31 @@
+//Contains functions for mandelbrot rendering
+
+int mandelbrot(double x, double y)
+{
+    double r = double(x);
+    double i = double(y);
+
+    int iter = 0;
+    while((r*r + i*i) < double(4) && iter < iters)
+    {
+        iter ++;
+
+
+        if(moivre != 0)
+        {
+            comp n = exp_moivre(comp(r, i), exponent);
+            r = n.r;
+            i = n.i;
+        }else
+        {
+            comp n = exp_norm(comp(r, i), int(floor(exponent)));
+            r = n.r;
+            i = n.i;
+        }
+
+        r += x;
+        i += y;
+    }
+
+    return iter;
+}

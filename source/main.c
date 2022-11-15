@@ -45,8 +45,12 @@
 #include <nuklear.h>
 #include <nuklear_sdl_gl3.h>
 
+//STB libs
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#define STB_INCLUDE_LINE_GLSL
+#define STB_INCLUDE_IMPLEMENTATION
+#include <stb_include.h>
 
 bool mouse_pressed = false;
 double prev_x_clk;
@@ -57,7 +61,6 @@ struct backen_instance_t bck_inst;
 int event_callback(SDL_Event event, struct window_ctx_t *ctx)
 {
     bool act = nk_item_is_any_active(ctx->nk_ctx);
-
     if(event.type == SDL_MOUSEWHEEL && !act)
     {
         backend_proxy_mouse_zoom(&bck_inst, event.wheel.y);
