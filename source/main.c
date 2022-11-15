@@ -54,13 +54,14 @@ double prev_y_clk;
 
 struct backen_instance_t bck_inst;
 
-void event_callback(SDL_Event event, struct window_ctx_t *ctx)
+int event_callback(SDL_Event event, struct window_ctx_t *ctx)
 {
     bool act = nk_item_is_any_active(ctx->nk_ctx);
 
     if(event.type == SDL_MOUSEWHEEL && !act)
     {
         backend_proxy_mouse_zoom(&bck_inst, event.wheel.y);
+        return 1;
     }
 
     if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !mouse_pressed && !act)
@@ -103,12 +104,12 @@ void event_callback(SDL_Event event, struct window_ctx_t *ctx)
         nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_ARROW);
         mouse_pressed = false;
     }
-    
+    return 0;
 }
 
 void loop_callback(struct window_ctx_t *wctx)
 {
-    if(nk_begin(wctx->nk_ctx, "Control", nk_rect(10, 10, 300, 500), NK_WINDOW_MOVABLE | NK_WINDOW_BORDER | NK_WINDOW_MINIMIZABLE | NK_WINDOW_SCALABLE))
+    if(nk_begin(wctx->nk_ctx, "Control", nk_rect(10, 10, 300, 500), NK_WINDOW_BORDER | NK_WINDOW_DYNAMIC | NK_WINDOW_MOVABLE | NK_WINDOW_BORDER | NK_WINDOW_MINIMIZABLE | NK_WINDOW_SCALABLE))
     {
         backend_proxy_ui_control(&bck_inst, wctx->nk_ctx);
     }

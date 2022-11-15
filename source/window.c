@@ -56,7 +56,7 @@ void window_set_resize_callback(struct window_ctx_t *ctx, void (*resize_callback
     ctx->resize_callback = resize_callback;
 }
 
-void window_set_event_callback(struct window_ctx_t *ctx, void (*event_callback)(SDL_Event event, struct window_ctx_t *ctx))
+void window_set_event_callback(struct window_ctx_t *ctx, int (*event_callback)(SDL_Event event, struct window_ctx_t *ctx))
 {
     ctx->event_callback = event_callback;
 }
@@ -76,16 +76,17 @@ void window_loop(struct window_ctx_t *ctx, void (*loop_callback)(struct window_c
         nk_input_begin(ctx->nk_ctx);
         while(SDL_PollEvent(&ctx->event))
         {
+            int consumed = 0;
             if(ctx->event_callback)
             {
-                ctx->event_callback(ctx->event, ctx);
+                consumed = ctx->event_callback(ctx->event, ctx);
             }
-            if(ctx->event.type == SDL_QUIT)
+            if(ctx->event.type == SDL_QUIT && !consumed)
             {
                 LOG("Quit requested");
                 quit = 1;
             }
-            if(ctx->event.type == SDL_WINDOWEVENT && ctx->event.window.event == SDL_WINDOWEVENT_RESIZED)
+            if(ctx->event.type == SDL_WINDOWEVENT && ctx->event.window.event == SDL_WINDOWEVENT_RESIZED && !consumed)
             {
                 int w, h;
                 SDL_GetWindowSize(ctx->window, &w, &h);
@@ -98,7 +99,7 @@ void window_loop(struct window_ctx_t *ctx, void (*loop_callback)(struct window_c
                     ctx->resize_callback(w, h);
                 }
             }
-            if(ctx->event.type == SDL_KEYDOWN)
+            if(ctx->event.type == SDL_KEYDOWN && !consumed)
             {
                 switch (ctx->event.key.keysym.sym)
                 {
@@ -110,7 +111,10 @@ void window_loop(struct window_ctx_t *ctx, void (*loop_callback)(struct window_c
                     break;
                 }
             }
-            nk_sdl_handle_event(&ctx->event);
+            if(!consumed)
+            {
+                nk_sdl_handle_event(&ctx->event);
+            }
         }
         nk_input_end(ctx->nk_ctx);
 
