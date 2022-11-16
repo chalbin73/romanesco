@@ -3,10 +3,6 @@
 
 This program is a simple GPU, double-floating-point precision plotter for Julia sets and Mandlebrot sets. It is made with OpenGL compute-shaders and it is written in C.
 
-#### Currently
-
-Working on implementing new fractals and making QOL enhancements
-
 #### Features
 
 - [x] Julia sets with live constant changing
@@ -20,14 +16,12 @@ Working on implementing new fractals and making QOL enhancements
 
 #### Todo (Not ordered)
 
-- [ ] Clean code
-  - [ ] Separate fractal renderers in different files
-  - [ ] Clean CPU side code
 - [x] Multiple coloring methods
 - [x] Multiple coloring palettes
-- [ ] Buddhabrot fractal
+- [ ] Visualize the different values taken by the serie
+- [ ] Buddhabrot fractal (probably another backend)
 - [ ] Burning ship fractal
-- [ ] Newton's fractals
+- [ ] Newton's fractals (another backend)
 - [ ] Save locations
 - [ ] Add some sort of configuration (Mostly to configure OpenGL workgroup sizes)
 
@@ -40,6 +34,7 @@ Working on implementing new fractals and making QOL enhancements
 - Posix for file I/O
 - tinydir.h (included) to scan directories
 - stb_image.h (included) to read images
+- stb_include.h (included) to use include directive in GLSL
 
 ## Building 
 

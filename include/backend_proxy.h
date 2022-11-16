@@ -12,6 +12,19 @@
 *   Should follow in order to interface with the codebase
 */
 
+enum click_btn_t
+{
+    BCK_CLK_LEFT = 0,
+    BCK_CLK_RIGHT,
+    BCK_CLK_MIDDLE
+};
+
+enum click_type_t
+{
+    BCK_CLK_DOWN = 0,
+    BCK_CLK_UP
+};
+
 //Is the actual interface
 //Contains function pointers to the backend
 struct backend_proxy_t
@@ -46,6 +59,9 @@ struct backend_proxy_t
 
     //Will be called when mouse is zooming (mouse wheel)
     uint32_t (*backend_mouse_zoom)(void *bctx, double offset);
+
+    //Will be called once when mouse button was clicked
+    uint32_t (*backend_mouse_click)(void *bctx, enum click_type_t click_type, enum click_btn_t button);
 };
 
 //Holds pointers to backend implementation plus
@@ -76,5 +92,6 @@ uint32_t backend_proxy_resize(struct backen_instance_t *backend_instance, uint32
 uint32_t backend_proxy_plot_save(struct backen_instance_t *backend_instance, char* filename);
 uint32_t backend_proxy_mouse_drag(struct backen_instance_t *backend_instance, double xoff, double yoff);
 uint32_t backend_proxy_mouse_zoom(struct backen_instance_t *backend_instance, double offset);
+uint32_t backend_proxy_mouse_click(struct backen_instance_t *backend_instance, enum click_type_t click_type, enum click_btn_t button);
 
 #endif //__BACKEND_PROXY_H__

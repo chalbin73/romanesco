@@ -54,5 +54,10 @@ uint32_t backend_proxy_mouse_drag(struct backen_instance_t *backend_instance, do
 
 uint32_t backend_proxy_mouse_zoom(struct backen_instance_t *backend_instance, double offset)
 {
-        return backend_instance->interface.proxy->backend_mouse_zoom(backend_instance->bctx, offset);
+    return backend_instance->interface.proxy->backend_mouse_zoom(backend_instance->bctx, offset);
+}
+
+uint32_t backend_proxy_mouse_click(struct backen_instance_t *backend_instance, enum click_type_t click_type, enum click_btn_t button)
+{
+    return backend_instance->interface.proxy->backend_mouse_click(backend_instance->bctx, click_type, button);
 }

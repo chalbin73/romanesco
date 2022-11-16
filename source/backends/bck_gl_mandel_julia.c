@@ -1,9 +1,5 @@
-#include "util.h"
-#include <SDL2/SDL_opengl_glext.h>
-#include <SDL2/SDL_stdinc.h>
 #include <backends/bck_gl_mandel_julia.h>
-#include <stdint.h>
-#include <string.h>
+
 
 const char* FRACTAL_NAMES[2] = 
 {
@@ -46,7 +42,8 @@ struct backend_proxy_t bck_gl_mandel_julia_proxy =
     .backend_ui_control = bck_gl_mj_ui_control,
     .backend_ui_custom = bck_gl_mj_ui_custom,
     .backend_mouse_drag = bck_gl_mj_mouse_drag,
-    .backend_mouse_zoom = bck_gl_mj_mouse_zoom
+    .backend_mouse_zoom = bck_gl_mj_mouse_zoom,
+    .backend_mouse_click = bck_gl_mj_mouse_click
 };
 
 struct backend_t bck_gl_mandel_julia =
@@ -472,7 +469,15 @@ uint32_t bck_gl_mj_ui_control(void *gctx, struct nk_context *nk_ctx)
     //Histogram
     nk_layout_row_dynamic(nk_ctx, 20, 1);
     nk_label(nk_ctx, "Iteration histogram", NK_TEXT_ALIGN_CENTERED);
-    ctx->show_iteration_histogram = nk_check_label(nk_ctx, "Show iteration histogram", ctx->show_iteration_histogram);
+    bool sih_temp = ctx->show_iteration_histogram;
+    sih_temp = nk_check_label(nk_ctx, "Show iteration histogram", sih_temp);
+
+    if(sih_temp != ctx->show_iteration_histogram)
+    {
+        params->updated = true;
+    }
+
+    ctx->show_iteration_histogram = sih_temp;
     if(ctx->show_iteration_histogram)
     {
         nk_layout_row_dynamic(nk_ctx, 200, 1);
@@ -527,6 +532,19 @@ uint32_t bck_gl_mj_mouse_zoom(void *gctx, double offset)
     ctx->window.zoom += ctx->window.zoom * (offset / 10);
 
     ctx->params.updated = true;
+    return 0;
+}
+
+uint32_t bck_gl_mj_mouse_click(void *gctx, enum click_type_t type, enum click_btn_t btn)
+{
+    if(type == BCK_CLK_DOWN)
+    {
+        LOG("DOWN");
+    }else
+    {
+        LOG("UP");
+    }
+
     return 0;
 }
 

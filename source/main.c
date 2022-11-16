@@ -52,7 +52,8 @@
 #define STB_INCLUDE_IMPLEMENTATION
 #include <stb_include.h>
 
-bool mouse_pressed = false;
+bool left_mouse_pressed = false;
+bool right_mouse_pressed = false;
 double prev_x_clk;
 double prev_y_clk;
 
@@ -67,9 +68,11 @@ int event_callback(SDL_Event event, struct window_ctx_t *ctx)
         return 1;
     }
 
-    if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !mouse_pressed && !act)
+    //Left mouse press/release
+    if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !left_mouse_pressed && !act)
     {
-        mouse_pressed = true;
+        backend_proxy_mouse_click(&bck_inst, BCK_CLK_DOWN, BCK_CLK_LEFT);
+        left_mouse_pressed = true;
 
         int x, y;
         SDL_GetMouseState(&x, &y);
@@ -82,7 +85,13 @@ int event_callback(SDL_Event event, struct window_ctx_t *ctx)
 
         nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_MOVE);
     }
-    if(event.type == SDL_MOUSEMOTION && mouse_pressed && !act)
+    if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
+    {
+        backend_proxy_mouse_click(&bck_inst, BCK_CLK_UP, BCK_CLK_LEFT);
+        nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_ARROW);
+        left_mouse_pressed = false;
+    }
+    if(event.type == SDL_MOUSEMOTION && left_mouse_pressed && !act)
     {
         int x, y;
         SDL_GetMouseState(&x, &y);
@@ -98,14 +107,22 @@ int event_callback(SDL_Event event, struct window_ctx_t *ctx)
         prev_x_clk = n_x_clk;
         prev_y_clk = n_y_clk;
     }
-    if(mouse_pressed && !act) 
+
+    //Right mouse press/release
+    if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_RIGHT && !right_mouse_pressed && !act)
+    {
+        backend_proxy_mouse_click(&bck_inst, BCK_CLK_DOWN, BCK_CLK_RIGHT);
+        right_mouse_pressed = true;
+    }
+    if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_RIGHT)
+    {
+        backend_proxy_mouse_click(&bck_inst, BCK_CLK_UP, BCK_CLK_RIGHT);
+        right_mouse_pressed = false;
+    }
+
+    if(left_mouse_pressed && !act) 
     {
         nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_MOVE);
-    }
-    if(event.type == SDL_MOUSEBUTTONUP && event.button.button == SDL_BUTTON_LEFT)
-    {
-        nk_style_set_cursor(ctx->nk_ctx, NK_CURSOR_ARROW);
-        mouse_pressed = false;
     }
     return 0;
 }

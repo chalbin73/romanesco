@@ -195,6 +195,7 @@ uint32_t bck_gl_mj_ui_control(void *gctx, struct nk_context *nk_ctx);
 uint32_t bck_gl_mj_ui_custom(void *gctx, struct nk_context *nk_ctx);
 uint32_t bck_gl_mj_mouse_drag(void *gctx, double xoff, double yoff);
 uint32_t bck_gl_mj_mouse_zoom(void *gctx, double offset);
+uint32_t bck_gl_mj_mouse_click(void *gctx, enum click_type_t type, enum click_btn_t btn);
 
 //Functions inherent to the backend
 void gl_mj_load_coloring_scheme(void *gctx, char *filename);
